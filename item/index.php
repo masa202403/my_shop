@@ -32,11 +32,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <h2 class="p-2 text-center">商品一覧</h2>
 
         <div class="d-flex mt-3 mb-3">
-            <a href="../user/" class="">ユーザホーム</a>
+            <a href="../user/" class="p-1">ユーザホーム</a>
             |
-            <a href="./" class="">商品一覧</a>
+            <a href="./" class="p-1">商品一覧</a>
             |
-            <a href="cart.php" class="">ショッピングカート</a>
+            <a href="cart.php" class="p-1">ショッピングカート</a>
         </div>
 
         <div class="row row-cols-1 row-cols-md-3 g-4">
