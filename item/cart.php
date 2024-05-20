@@ -1,61 +1,45 @@
 <?php
 // env.php を読み込み
 require_once '../env.php';
+
 // lib/DB.php を読み込み
 require_once '../lib/DB.php';
 
-// SESSION開始
+// セッション開始
 session_start();
 session_regenerate_id(true);
 
-// item_is パラメータがあればカートに追加
-if(isset($_GET['item_id'])){
+// item_id パラメータがあればカート追加
+if (isset($_GET['item_id'])) {
     // カートに追加
     addCart($_GET['item_id']);
 }
 
-// カートデータ取得
+// カートデータの取得
 $cart_items = loadCartItems();
 
-
-function addCart($item_id){
-    // DB接続
+function addCart($item_id)
+{
+    // DBに接続する
     $db = new DB();
 
-    // DBから商品取得
+    // DBから items.id を使って商品の取得
     $sql = "SELECT * FROM items WHERE id = :id;";
     $stmt = $db->pdo->prepare($sql);
     $stmt->execute(['id' => $item_id]);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // 商品があればSESSION登録
-    if($item){
+    // 商品があればセッションに登録
+    if ($item) {
         $_SESSION['my_shop']['cart_items'][$item_id] = $item;
     }
 }
 
-function loadCartItems(){
-    if(!empty($_SESSION['my_shop']['cart_items'])){
+function loadCartItems()
+{
+    if (!empty($_SESSION['my_shop']['cart_items'])) {
         return $_SESSION['my_shop']['cart_items'];
     }
-}
-?>
-
-<?php
-require_once '../env.php';
-require_once '../lib/db.php';
-
-// DB接続
-$db = new DB();
-
-// itemsテーブルからレコードを取得
-$sql = "SELECT * FROM items;";
-$stmt = $db->pdo->prepare($sql);
-$stmt->execute();
-
-$items = [];
-while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-    $items[] = $row;
 }
 ?>
 
@@ -77,7 +61,6 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
         <div>
             <a href="./">商品一覧</a>
         </div>
-
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <?php if ($cart_items) : ?>
                 <?php foreach ($cart_items as $cart_item) : ?>
@@ -96,14 +79,19 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
             <?php endif ?>
         </div>
 
-        <div class="text-center">
-            <p>
-                この内容で購入しますか?
-            </p>
-            <form action="purchase.php" method="post">
-                <button class="btn btn-primary">購入</button>
-            </form>
+        <div class="mt-4 text-center">
+            <?php if (!empty($cart_items)) : ?>
+                <p>
+                    この内容で購入しますか？
+                </p>
+                <form action="purchase.php" method="post">
+                    <button class="btn btn-primary">購入</button>
+                </form>
+            <?php else: ?>
+                <p>カートに商品がありません</p>
+            <?php endif ?>
         </div>
     </main>
 </body>
+
 </html>
